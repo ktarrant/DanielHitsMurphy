@@ -1,6 +1,5 @@
 from plotly import plotly
-from plotly.tools import FigureFactory as FF
-from matplotlib import pyplot
+from plotly.tools import get_embed, FigureFactory as FF
 from download import get_gamelog_cached
 from datetime import datetime
 import pandas as pd
@@ -34,6 +33,12 @@ gamelog.Date = pd.to_datetime(gamelog.Date)
 wpaCum = gamelog.set_index("Date").WPA.cumsum().dropna()
 weeks = pd.DataFrame(create_weekly(wpaCum))
 fig = FF.create_candlestick(weeks.Open, weeks.High, weeks.Low, weeks.Close, dates=weeks.start_date)
-plotly.plot(fig, filename='murphy-candlestick', validate=False)
+url = plotly.plot(fig, filename='murphy-candlestick', auto_open=False)
+html = get_embed(url)
+with open("index.html", "w") as fobj:
+    fobj.write(html)
+
+# Don't like plotly? 
+# from matplotlib import pyplot
 # pyplot.plot(wpaCum)
 # pyplot.show()
